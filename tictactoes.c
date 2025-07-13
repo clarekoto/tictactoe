@@ -63,13 +63,19 @@ bool valid_move(char* row, char* col, Board* board) {
 }
 
 void get_move(Board* board, char player) {
-	printf("Where would you like to place a %c?\nRow: ", player);
- 	char row[maxBufferSize];
-	fgets(row, maxBufferSize, stdin);
-	char col[maxBufferSize];
-	printf("Column: \n");
-	fgets(col, maxBufferSize, stdin);
-	valid_move(row, col, *board);	
+	printf("Where would you like to place a %c?\n", player);
+ 	
+	while(1) {
+		printf("Row: ");
+		char row[maxBufferSize];
+		fgets(row, maxBufferSize, stdin);
+		char col[maxBufferSize];
+		printf("Column: \n");
+		fgets(col, maxBufferSize, stdin);
+		if (valid_move(row, col, *board)) {
+			break;
+		}
+	}	
 }
 
 int main(int argc, char* argv[]) {
