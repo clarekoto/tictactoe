@@ -3,15 +3,18 @@
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 const char* welcome = "Welcome to tictactoe, try your best to win!";
 const char* incorrectInput = "\"%s\" isn't an option, please type either X or O\n";
+const char* invalidMove = "Sorry that is not a valid move\n";
+const char* takenSpace = "Whoops that spot is taken\n";
+
 const int maxBufferSize = 80;
 
 typedef struct {
 	char grid[3][3];
-	int row;
-	int col;
+	char player;
 } Board;
 
 void init_board(Board* board) {
@@ -22,7 +25,7 @@ void init_board(Board* board) {
 	}
 }
 
-char get_player(void) {
+void get_player(Board* board) {
         printf("Would you like to play as X or O ?\n");
         char player;
 	while(1) {
@@ -37,7 +40,7 @@ char get_player(void) {
 	}
 	sleep(1);
 	printf("Great! You will play as %c\n", player);
-	return player;
+	board->player = player;
 }  
 
 void print_board(Board board) {
@@ -52,39 +55,54 @@ void print_board(Board board) {
 	printf("\n");
 }
 
+void update_board(Board* board, int row, int col, char piece) {
+	board->grid[row-1][col-1] = piece;
+}
+
 bool valid_move(char* row, char* col, Board* board) {
 	int check_row = atoi(row);
 	int check_col = atoi(col);
-	if (!check_row || !check_col || check_row < 4 || check_col < 4) {
+	if (!check_row || !check_col || check_row > 3  || check_col > 3) {
+		fprintf(stderr, "%s", invalidMove);
 		return false;
 	}
-	board->grid.row = check_row;
-	board->grid.col = check_col;
+	if (board->grid[check_row][check_col] != '-') {
+		fprintf(stderr, "%s", takenSpace);
+		return false;
+	}
+	update_board(board, check_row, check_col, board->player);
+	return true;
 }
 
-void get_move(Board* board, char player) {
-	printf("Where would you like to place a %c?\n", player);
+void get_move(Board* board) {
+	printf("Where would you like to place a %c?\n", board->player);
  	
 	while(1) {
 		printf("Row: ");
 		char row[maxBufferSize];
 		fgets(row, maxBufferSize, stdin);
 		char col[maxBufferSize];
-		printf("Column: \n");
+		printf("Column: ");
 		fgets(col, maxBufferSize, stdin);
-		if (valid_move(row, col, *board)) {
+		if (valid_move(row, col, board)) {
 			break;
 		}
 	}	
+}
+
+bool game_finished(Board board) {
+	return false;
 }
 
 int main(int argc, char* argv[]) {
 	Board board = {0};
 	init_board(&board);
 	printf("%s\n", welcome);
-	char player = get_player();
+	get_player(&board);
 	sleep(1);
-	print_board(board);
-	get_move(&board, player);
+	while(!game_finished(board)){
+		print_board(board);
+		get_move(&board);
+	}
 	return 0;
 }
