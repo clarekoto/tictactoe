@@ -17,6 +17,11 @@ typedef struct {
 	char player;
 } Board;
 
+typedef struct {
+	int row;
+	int col;
+} Move;
+
 void init_board(Board* board) {
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
@@ -90,8 +95,53 @@ void get_move(Board* board) {
 	}	
 }
 
-bool game_finished(Board board) {
-	return false;
+Move get_random() {
+	Move random = {0};
+	random.row =  rand() % 3;
+	random.col = rand() % 3;
+
+void computer_move(Board* board) {
+	in	
+}
+
+char game_finished(Board board) {
+	// Check Rows
+	for (int i = 0; i < 3; i++) {
+		if (i == 0) {
+			char previous = board.grid[i][j];
+		}
+		for (int j = 0; j < 3; j++) {
+			if (board.grid[i][j] != previous || board.grid[i][j] == '-') {
+			 	break;
+			}
+		}
+		return previous;
+	}
+	
+	// Check Cols
+	for (int j = 0; j < 3; j++) {
+		if (j == 0) {
+			char previous = board.grid[i][j];
+		}
+		for (int i = 0; i < 3; i++) {
+			if (board.grid[i][j] != previous || board.grid[i][j] == '-') {
+				break;
+			}
+		}
+		return previous;
+	}
+	
+	// Check diagonals
+	if (board.grid[0][0] == board.grid[1][1] && board.grid[0][0] == board.grid[2][2]
+		&& board.grid[0][0] != '-') {
+		return board.grid[0][0];
+	}
+	if (board.grid[0][2] == board.grid[1][1] || board.grid[0][2] == board.grid[2][0] 
+		&& board.grid[0][2] != '-') {
+		return board.grid[0][2];
+	}			
+			
+	return 'z';
 }
 
 int main(int argc, char* argv[]) {
@@ -103,6 +153,7 @@ int main(int argc, char* argv[]) {
 	while(!game_finished(board)){
 		print_board(board);
 		get_move(&board);
+		
 	}
 	return 0;
 }
